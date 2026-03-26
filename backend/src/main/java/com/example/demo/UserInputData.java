@@ -30,9 +30,8 @@ public class UserInputData {
 
     //dont need setters (except this one) cause object doesn't need to be mutable (mostly)
 
-    public void setAvailableEquipment(Set<String> equipment){
-        //TODO
-        return null;
+    public void setAvailableEquipment(Set<String> equipment) {
+        this.availableEquipment = equipment;
     }
 
 

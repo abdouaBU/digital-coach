@@ -2,8 +2,8 @@
 Web app/fitness platform which assists in tracking nutrition and fitness goals
 
 ## HOW TO RUN
-In CMD 1: run `mvnw.cmd clean spring-boot:run` in backend.  
-In CMD 2: run `npm run dev` in frontend. Then open the link ex. `http://localhost:5173/` in a browser.
+In CMD 1: run `mvnw.cmd spring-boot:run` in backend.  
+In CMD 2: run `npm run dev` in frontend. Then open the link ex. `http://localhost:5173/` in a browser. (will need to do `npm install` the first time to intall it obv)
 
 ## EXPLANATION
 `WorkoutForm.jsx` in frontend is sending an HTTP request to the backend.
