@@ -1,3 +1,5 @@
+package com.example.demo;
+
 import java.util.*;
 
 public class UserInputData {
@@ -26,7 +28,12 @@ public class UserInputData {
         //TODO
     }
 
-    //dont need setters cause object doesn't need to be mutable 
+    //dont need setters (except this one) cause object doesn't need to be mutable (mostly)
+
+    public void setAvailableEquipment(Set<String> equipment){
+        //TODO
+        return null;
+    }
 
 
     //Getters

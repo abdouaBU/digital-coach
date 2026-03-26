@@ -1,0 +1,7 @@
+{
+  "userGoal": "MUSCLE",
+  "userLevel": "INTERMEDIATE",
+  "numDays": 4,
+  "targetMuscles": ["CHEST", "BACK", "SHOULDERS"],
+  "availableEquipment": ["BARBELL", "DUMBBELLS", "PULL_UP_BAR"]
+}
