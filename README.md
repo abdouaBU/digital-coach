@@ -28,4 +28,4 @@ const res = await fetch("http://localhost:8080/api/workout", {
 });
 ```
 
-All the front end needs to do is complete the first object (see the example file) then send it with the second code block in the final version.
+All the front end needs to do is complete the first object (see the example file) then send it with the second code block in the final version.(if i am correct and everything is working :)
