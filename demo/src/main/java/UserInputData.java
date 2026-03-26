@@ -26,7 +26,7 @@ public class UserInputData {
         //TODO
     }
 
-    //dont need setters cause object doesn't need to be mutable
+    //dont need setters cause object doesn't need to be mutable 
 
 
     //Getters
