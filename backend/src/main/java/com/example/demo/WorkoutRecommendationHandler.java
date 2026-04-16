@@ -12,7 +12,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173") // React dev server
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"}) // React dev server
 public class WorkoutRecommendationHandler {
 
     @Autowired
