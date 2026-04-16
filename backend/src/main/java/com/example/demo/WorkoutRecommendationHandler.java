@@ -53,7 +53,7 @@ public class WorkoutRecommendationHandler {
             }
             return allDetectedEquipment;
         } catch (Exception e) {
-            System.err.println("VISION API FAILED: " + e.getMessage());
+            System.err.println("API FAILED: " + e.getMessage());
             e.printStackTrace();
             return null; 
         }

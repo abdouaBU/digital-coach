@@ -35,9 +35,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
+        <!-- Gemini API -->
         <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>spring-cloud-gcp-starter-vision</artifactId>
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
