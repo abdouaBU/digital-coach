@@ -1,7 +1,8 @@
-import WorkoutForm from './WorkoutForm'
+import MuscleModel from './MuscleModel'
+//import WorkoutForm from './WorkoutForm'
 
 function App() {
-  return <WorkoutForm />
+  return <MuscleModel />
 }
 
 export default App
