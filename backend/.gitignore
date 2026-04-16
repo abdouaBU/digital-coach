@@ -6,7 +6,7 @@ target/
 *.json
 
 ### application properties ###
-*.application.properties
+application-local.properties
 
 ### STS ###
 .apt_generated
