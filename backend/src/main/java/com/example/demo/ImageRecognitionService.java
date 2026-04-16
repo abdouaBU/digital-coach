@@ -30,7 +30,8 @@ import java.util.stream.Collectors;
 @Service // This tells Spring to manage this class
 public class ImageRecognitionService {
 
-    private final Client client;
+    private volatile Client client;
+    private final String apiKey;
     private final String[] availableEquipment;
 
     // 1. Create the strict instruction template
@@ -49,10 +50,23 @@ public class ImageRecognitionService {
         """;
 
     public ImageRecognitionService(@Value("${gemini.api.key}") String apiKey) {
-        this.client = Client.builder()
-                .apiKey(apiKey)
-                .build();
+        this.apiKey = apiKey == null ? "" : apiKey.trim();
         this.availableEquipment = loadEquipmentValues();
+    }
+
+    private Client getClient() {
+        if (apiKey.isEmpty()) {
+            throw new IllegalStateException(
+                    "Gemini API key is not configured. Set GEMINI_API_KEY in the environment or backend/.env.");
+        }
+
+        if (client == null) {
+            client = Client.builder()
+                    .apiKey(apiKey)
+                    .build();
+        }
+
+        return client;
     }
 
     private String[] loadEquipmentValues() {
@@ -104,7 +118,7 @@ public class ImageRecognitionService {
             Content inputContent = Content.fromParts(imagePart, promptPart);
 
             // 4. Call the Gemini API (Upgraded to 2.5-flash for better instruction following)
-            GenerateContentResponse response = client.models.generateContent(
+            GenerateContentResponse response = getClient().models.generateContent(
                     "gemini-2.5-flash-lite",
                     inputContent,
                     null
