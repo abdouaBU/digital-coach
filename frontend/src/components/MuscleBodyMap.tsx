@@ -10,17 +10,17 @@ interface MuscleBodyMapProps {
 }
 const frontMuscles = [
   { id: 'chest', label: 'Chest', x: 72, y: 28 },
-  { id: 'core', label: 'Core', x: 72, y: 40 },
+  { id: 'core', label: 'Core', x: 61, y: 40 },
   { id: 'shoulders', label: 'Shoulders', x: 18, y: 24 },
   { id: 'biceps', label: 'Biceps', x: 18, y: 33 },
   { id: 'legs', label: 'Quads', x: 75, y: 60 },
-  { id: 'calves', label: 'Calves', x: 75, y: 78 },
+  { id: 'calves', label: 'Calves', x: 69, y: 78 },
 ]
 
 const backMuscles = [
   { id: 'back', label: 'Traps', x: 72, y: 24 },
-  { id: 'back', label: 'Lats', x: 18, y: 35 },
-  { id: 'glutes', label: 'Glutes', x: 18, y: 50 },
+  { id: 'back', label: 'Lats', x: 30, y: 27 },
+  { id: 'glutes', label: 'Glutes', x: 30, y: 50 },
   { id: 'legs', label: 'Hamstrings', x: 72, y: 60 },
   { id: 'triceps', label: 'Triceps', x: 18, y: 33 },
 ]
