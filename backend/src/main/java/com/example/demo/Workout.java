@@ -17,7 +17,7 @@ public class Workout {
     }
     
     public Workout(){
-        //TODO
+        this.exerciseList = new ArrayList<Exercise>();
     }
 
     //getters
@@ -28,5 +28,10 @@ public class Workout {
 
     public List<Exercise> getExerciseList(){
         return this.exerciseList;
+    }
+
+    public void addExercise(String exercise){
+        Exercise actualExercise = new Exercise(exercise, 3, 10);
+        this.exerciseList.add(actualExercise);
     }
 }

@@ -1536,7 +1536,7 @@
     <Desc>The decline reverse crunch is a popular bodyweight exercise targeting the abdominal muscles, particularly the lower abs. It is usually performed for high reps, such as 10-15 reps per set or more, as part of the ab-focused portion of a workout.</Desc>
     <Type>Strength</Type>
     <BodyPart>Abdominals</BodyPart>
-    <Equipment>Decline Bench</Equipment>
+    <Equipment>Bench</Equipment>
     <Technical_Skill>0.55</Technical_Skill>
     <Stability_Demand>0.5</Stability_Demand>
     <Metabolic_Demand>0.4</Metabolic_Demand>
@@ -1604,7 +1604,7 @@
     <Desc>The Otis-up is a weighted exercise focusing on the abdominal muscles, as well as the shoulders to a lesser degree. It primarily targets the rectus abdominus or “six-pack” muscles, but also involves the obliques and deep core muscles. It is normally performed on a decline bench holding a weight plate, but can also be performed with a dumbbell, kettlebell, or other weight.</Desc>
     <Type>Strength</Type>
     <BodyPart>Abdominals</BodyPart>
-    <Equipment>Decline Bench</Equipment>
+    <Equipment>Bench</Equipment>
     <Technical_Skill>0.55</Technical_Skill>
     <Stability_Demand>0.5</Stability_Demand>
     <Metabolic_Demand>0.5</Metabolic_Demand>
@@ -1740,7 +1740,7 @@
     <Desc>The barbell press sit-up is a weighted exercise focusing on the abdominal muscles, as well as the shoulders to a lesser degree. It primarily targets the rectus abdominis or &quot;six-pack&quot; muscles, but also involves the obliques and deep core muscles. It can be performed on the floor with the feet anchored or unanchored, or on a decline or other bench. It is similar to the Otis-up, which is performed with a weight plate.</Desc>
     <Type>Strength</Type>
     <BodyPart>Abdominals</BodyPart>
-    <Equipment>Decline Bench</Equipment>
+    <Equipment>Bench</Equipment>
     <Technical_Skill>0.55</Technical_Skill>
     <Stability_Demand>0.5</Stability_Demand>
     <Metabolic_Demand>0.79</Metabolic_Demand>
@@ -1859,7 +1859,7 @@
     <Desc>The bench crunch is a popular ab exercise performed lying on a bench. It is largely similar to the same exercise performed on the floor, but being able to press the lower back into the bench pad can help reinforce proper form and increase the burn in the abs. Like most crunch variations, it is usually performed for moderate to high reps, such as 8-12 reps per set or more.</Desc>
     <Type>Strength</Type>
     <BodyPart>Abdominals</BodyPart>
-    <Equipment>Decline Bench</Equipment>
+    <Equipment>Bench</Equipment>
     <Technical_Skill>0.55</Technical_Skill>
     <Stability_Demand>0.5</Stability_Demand>
     <Metabolic_Demand>0.79</Metabolic_Demand>
@@ -1876,7 +1876,7 @@
     <Desc>The decline plate sit-up twist is a weighted core exercise that works the obliques and rectus abdominis or &quot;six pack&quot; muscles, as well as the deep core muscles. Weighted sit-up variations are usually performed for moderate to high reps, such as 8-12 reps per set or more, as part of the core-focused portion of a workout.</Desc>
     <Type>Strength</Type>
     <BodyPart>Abdominals</BodyPart>
-    <Equipment>Decline Bench</Equipment>
+    <Equipment>Bench</Equipment>
     <Technical_Skill>0.55</Technical_Skill>
     <Stability_Demand>0.5</Stability_Demand>
     <Metabolic_Demand>0.5</Metabolic_Demand>
@@ -19811,7 +19811,7 @@
     <Desc></Desc>
     <Type>Plyometrics</Type>
     <BodyPart>Chest</BodyPart>
-    <Equipment>Decline Bench</Equipment>
+    <Equipment>Bench</Equipment>
     <Technical_Skill>0.35</Technical_Skill>
     <Stability_Demand>0.5</Stability_Demand>
     <Metabolic_Demand>0.9</Metabolic_Demand>
@@ -24809,7 +24809,7 @@
     <Desc>The incline straight-arm pull-over is an upper-body exercise targeting the chest and lats (latissimus dorsi). Performing it on an incline bench emphasizes the stretch on the chest in particular. If this movement causes pain in the front of the shoulders, perform it with a more limited range of motion or try pull-overs using a high cable stack instead. Pull-over variations are usually performed for moderate to high reps, such as 8-12 reps per set or more, as part of chest or back-focused upper-body training.</Desc>
     <Type>Strength</Type>
     <BodyPart>Lats</BodyPart>
-    <Equipment>Incline Bench</Equipment>
+    <Equipment>Bench</Equipment>
     <Technical_Skill>0.55</Technical_Skill>
     <Stability_Demand>0.5</Stability_Demand>
     <Metabolic_Demand>0.25</Metabolic_Demand>

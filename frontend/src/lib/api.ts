@@ -1,19 +1,18 @@
 const API_BASE = 'http://localhost:8080/api'
 
-export async function submitWorkoutConfig(data: {
-  userGoal: string
-  userLevel: string
-  numDays: number
-  targetMuscles: string[]
-  availableEquipment: string[]
-}) {
-  const res = await fetch(`${API_BASE}/workout`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  })
-  if (!res.ok) throw new Error('Failed to submit workout config')
-  return res.text()
+export async function submitWorkoutConfig(equipment: string[]) {
+  try {
+    const res = await fetch(`${API_BASE}/workout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ equipment }),
+    })
+    if (!res.ok) throw new Error('Failed to submit workout config')
+    return res.json()
+  } catch (err) {
+    console.error('submitWorkoutConfig error:', err)
+    return null
+  }
 }
 
 export async function detectEquipment(files: File[]): Promise<string[]> {
