@@ -28,7 +28,6 @@ export async function submitWorkoutConfig(data: {
 
 export async function detectEquipment(files: File[]): Promise<string[]> {
   const headers = await getAuthHeaders()
-  delete headers['Content-Type'] // Let browser set for FormData
   const formData = new FormData()
   files.forEach((f) => formData.append('files', f))
   const res = await fetch(`${API_BASE}/detect`, {

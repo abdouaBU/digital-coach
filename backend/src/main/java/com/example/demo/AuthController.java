@@ -82,6 +82,13 @@ public class AuthController {
     // PUT /api/auth/profile - update user profile
     @PutMapping("/profile")
     public ResponseEntity<Map<String, Object>> updateProfile(@RequestBody Map<String, Object> body, Authentication authentication) {
+        if (authentication == null || authentication.getName() == null || authentication.getName().isBlank()) {
+            Map<String, Object> unauthorized = new HashMap<>();
+            unauthorized.put("success", false);
+            unauthorized.put("error", "Authentication required");
+            return ResponseEntity.status(401).body(unauthorized);
+        }
+
         String email = authentication.getName();
         Map<String, Object> response = new HashMap<>();
 
@@ -101,7 +108,10 @@ public class AuthController {
         if (body.containsKey("height")) profile.setHeight((Integer) body.get("height"));
         if (body.containsKey("currentweight")) profile.setCurrentweight(((Number) body.get("currentweight")).doubleValue());
         if (body.containsKey("targetweight")) profile.setTargetweight(((Number) body.get("targetweight")).doubleValue());
-        if (body.containsKey("bodyfat")) profile.setBodyfat(((Number) body.get("bodyfat")).doubleValue());
+        if (body.containsKey("bodyfat")) {
+            Object bodyFatValue = body.get("bodyfat");
+            profile.setBodyfat(bodyFatValue == null ? null : ((Number) bodyFatValue).doubleValue());
+        }
         if (body.containsKey("level")) profile.setLevel((String) body.get("level"));
         if (body.containsKey("goaltype")) profile.setGoaltype((String) body.get("goaltype"));
         if (body.containsKey("workoutdaysperweek")) profile.setWorkoutdaysperweek((Integer) body.get("workoutdaysperweek"));

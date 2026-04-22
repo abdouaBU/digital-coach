@@ -531,7 +531,7 @@ export default function OnboardingPage() {
                   ['Goal', goalTypeLocal !== ''],
                   ['Plan', fitnessLevel !== ''],
                 ].map(([label, done]) => (
-                  <div key={label} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                     <span className="font-medium text-slate-700">{label}</span>
                     <span className={done ? 'text-emerald-600' : 'text-slate-300'}>
                       <CheckCircle size={18} />
