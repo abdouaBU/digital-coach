@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Search, Play, Clock, Flame, Dumbbell, ChevronRight, Camera, Trash2, Star, X } from 'lucide-react'
 import Link from 'next/link'
 import { MuscleBodyMap } from '@/components/MuscleBodyMap'
@@ -320,7 +321,7 @@ function loadCustomWorkouts(): Workout[] {
 }
 
 // ── Workout Details Modal ──────────────────────────────────────────────────────
-function WorkoutModal({ workout, onClose }: { workout: Workout; onClose: () => void }) {
+function WorkoutModal({ workout, onClose, router }: { workout: Workout; onClose: () => void; router: ReturnType<typeof useRouter> }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
@@ -419,12 +420,15 @@ function WorkoutModal({ workout, onClose }: { workout: Workout; onClose: () => v
 
         {/* Footer */}
         <div className="p-5 border-t border-gray-100">
-          <Link
-            href="/workouts/session"
+          <button
+            onClick={() => {
+              localStorage.setItem('selected-workout', JSON.stringify(workout));
+              router.push('/workouts/session');
+            }}
             className="w-full bg-blue-600 text-white rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
           >
             <Play size={14} /> Start Workout
-          </Link>
+          </button>
         </div>
       </div>
     </div>
@@ -433,6 +437,7 @@ function WorkoutModal({ workout, onClose }: { workout: Workout; onClose: () => v
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function Workouts() {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<Category>('All')
   const [selectedMuscles, setSelectedMuscles] = useState<string[]>([])
@@ -479,7 +484,7 @@ export default function Workouts() {
     <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6">
       {/* Modal */}
       {modalWorkout && (
-        <WorkoutModal workout={modalWorkout} onClose={() => setModalWorkout(null)} />
+        <WorkoutModal workout={modalWorkout} onClose={() => setModalWorkout(null)} router={router} />
       )}
 
       <div className="mb-4 md:mb-6">
@@ -529,10 +534,14 @@ export default function Workouts() {
           <h2 className="text-white font-bold text-base md:text-lg">Ready to Start?</h2>
           <p className="text-blue-200 text-xs md:text-sm">Jump into today&apos;s recommended workout</p>
         </div>
-        <Link href="/workouts/session"
+        <button
+          onClick={() => {
+            localStorage.setItem('selected-workout', JSON.stringify(allWorkouts[0]));
+            router.push('/workouts/session');
+          }}
           className="bg-white text-blue-600 font-semibold text-sm px-4 md:px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-blue-50 transition-colors whitespace-nowrap">
           <Play size={13} /> Start Today&apos;s Workout
-        </Link>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -605,10 +614,14 @@ export default function Workouts() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Link href="/workouts/session"
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('selected-workout', JSON.stringify(w));
+                      router.push('/workouts/session');
+                    }}
                     className="flex-1 bg-blue-600 text-white rounded-lg py-2.5 text-xs md:text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-blue-700 transition-colors">
                     <Play size={12} /> Start
-                  </Link>
+                  </button>
                   {/* View Details now opens the modal */}
                   <button
                     onClick={() => setModalWorkout(w)}
