@@ -2,9 +2,10 @@ package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -17,145 +18,106 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private ProfileRepository profileRepository;
 
-    // POST /api/auth/register
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> body) {
-        String name = body.get("name");
-        String email = body.get("email");
-        String password = body.get("password");
+    @Autowired
+    private JwtUtil jwtUtil;
 
+    // POST /api/auth/verify - verify JWT and return user info
+    @PostMapping("/verify")
+    public ResponseEntity<Map<String, Object>> verify(@RequestHeader("Authorization") String authHeader) {
         Map<String, Object> response = new HashMap<>();
 
-        // Validation
-        if (name == null || name.isBlank()) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.put("success", false);
-            response.put("error", "Name is required");
-            return ResponseEntity.badRequest().body(response);
-        }
-        if (email == null || !email.contains("@")) {
-            response.put("success", false);
-            response.put("error", "Valid email is required");
-            return ResponseEntity.badRequest().body(response);
-        }
-        if (password == null || password.length() < 6) {
-            response.put("success", false);
-            response.put("error", "Password must be at least 6 characters");
-            return ResponseEntity.badRequest().body(response);
+            response.put("error", "Invalid token");
+            return ResponseEntity.status(401).body(response);
         }
 
-        // Check if email exists
-        if (userRepository.existsByEmail(email)) {
+        String token = authHeader.substring(7);
+        if (!jwtUtil.validateToken(token)) {
             response.put("success", false);
-            response.put("error", "An account with this email already exists");
-            return ResponseEntity.badRequest().body(response);
+            response.put("error", "Invalid token");
+            return ResponseEntity.status(401).body(response);
         }
 
-        // Create user
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        userRepository.save(user);
+        String email = jwtUtil.extractEmail(token);
 
-        response.put("success", true);
-        response.put("user", Map.of("name", user.getName(), "email", user.getEmail(), "id", user.getId()));
-        return ResponseEntity.ok(response);
-    }
-
-    // POST /api/auth/login
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String password = body.get("password");
-
-        Map<String, Object> response = new HashMap<>();
-
+        // Find or create user in Users table
         Optional<User> optionalUser = userRepository.findByEmail(email);
+        User user;
         if (optionalUser.isEmpty()) {
-            response.put("success", false);
-            response.put("error", "No account found with this email");
-            return ResponseEntity.status(401).body(response);
+            user = new User();
+            user.setEmail(email);
+            user.setCreatedAt(java.time.OffsetDateTime.now());
+            userRepository.save(user);
+        } else {
+            user = optionalUser.get();
         }
 
-        User user = optionalUser.get();
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            response.put("success", false);
-            response.put("error", "Incorrect password");
-            return ResponseEntity.status(401).body(response);
+        // Get profile if exists
+        Optional<Profile> optionalProfile = profileRepository.findByEmail(email);
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("id", user.getId());
+        userInfo.put("email", user.getEmail());
+        if (optionalProfile.isPresent()) {
+            Profile profile = optionalProfile.get();
+            userInfo.put("name", profile.getName());
+            userInfo.put("age", profile.getAge());
+            userInfo.put("height", profile.getHeight());
+            userInfo.put("currentweight", profile.getCurrentweight());
+            userInfo.put("targetweight", profile.getTargetweight());
+            userInfo.put("bodyfat", profile.getBodyfat());
+            userInfo.put("level", profile.getLevel());
+            userInfo.put("goaltype", profile.getGoaltype());
+            userInfo.put("workoutdaysperweek", profile.getWorkoutdaysperweek());
         }
 
         response.put("success", true);
-        response.put("user", Map.of(
-            "name", user.getName(),
-            "email", user.getEmail(),
-            "id", user.getId()
-        ));
+        response.put("user", userInfo);
         return ResponseEntity.ok(response);
     }
 
-    // PUT /api/auth/profile — update user profile
+    // PUT /api/auth/profile - update user profile
     @PutMapping("/profile")
-    public ResponseEntity<Map<String, Object>> updateProfile(@RequestBody Map<String, Object> body) {
-        String email = (String) body.get("email");
-
-        Map<String, Object> response = new HashMap<>();
-
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        if (optionalUser.isEmpty()) {
-            response.put("success", false);
-            response.put("error", "User not found");
-            return ResponseEntity.status(404).body(response);
+    public ResponseEntity<Map<String, Object>> updateProfile(@RequestBody Map<String, Object> body, Authentication authentication) {
+        if (authentication == null || authentication.getName() == null || authentication.getName().isBlank()) {
+            Map<String, Object> unauthorized = new HashMap<>();
+            unauthorized.put("success", false);
+            unauthorized.put("error", "Authentication required");
+            return ResponseEntity.status(401).body(unauthorized);
         }
 
-        User user = optionalUser.get();
-
-        if (body.containsKey("name")) user.setName((String) body.get("name"));
-        if (body.containsKey("age")) user.setAge(((Number) body.get("age")).intValue());
-        if (body.containsKey("height")) user.setHeight(((Number) body.get("height")).intValue());
-        if (body.containsKey("currentWeight")) user.setCurrentWeight(((Number) body.get("currentWeight")).doubleValue());
-        if (body.containsKey("targetWeight")) user.setTargetWeight(((Number) body.get("targetWeight")).doubleValue());
-        if (body.containsKey("bodyFat")) user.setBodyFat(((Number) body.get("bodyFat")).doubleValue());
-        if (body.containsKey("level")) user.setLevel((String) body.get("level"));
-        if (body.containsKey("goalType")) user.setGoalType((String) body.get("goalType"));
-        if (body.containsKey("workoutDaysPerWeek")) user.setWorkoutDaysPerWeek(((Number) body.get("workoutDaysPerWeek")).intValue());
-
-        userRepository.save(user);
-
-        response.put("success", true);
-        response.put("user", Map.of(
-            "name", user.getName(),
-            "email", user.getEmail(),
-            "id", user.getId()
-        ));
-        return ResponseEntity.ok(response);
-    }
-
-    // GET /api/auth/profile/{email} — get user profile
-    @GetMapping("/profile/{email}")
-    public ResponseEntity<Map<String, Object>> getProfile(@PathVariable String email) {
+        String email = authentication.getName();
         Map<String, Object> response = new HashMap<>();
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        if (optionalUser.isEmpty()) {
-            response.put("success", false);
-            response.put("error", "User not found");
-            return ResponseEntity.status(404).body(response);
+        Optional<Profile> optionalProfile = profileRepository.findByEmail(email);
+        Profile profile;
+        if (optionalProfile.isEmpty()) {
+            profile = new Profile();
+            profile.setEmail(email);
+            profile.setCreatedAt(LocalDateTime.now());
+        } else {
+            profile = optionalProfile.get();
         }
 
-        User user = optionalUser.get();
-        Map<String, Object> profile = new HashMap<>();
-        profile.put("name", user.getName());
-        profile.put("email", user.getEmail());
-        profile.put("age", user.getAge());
-        profile.put("height", user.getHeight());
-        profile.put("currentWeight", user.getCurrentWeight());
-        profile.put("targetWeight", user.getTargetWeight());
-        profile.put("bodyFat", user.getBodyFat());
-        profile.put("level", user.getLevel());
-        profile.put("goalType", user.getGoalType());
-        profile.put("workoutDaysPerWeek", user.getWorkoutDaysPerWeek());
+        // Update fields
+        if (body.containsKey("name")) profile.setName((String) body.get("name"));
+        if (body.containsKey("age")) profile.setAge((Integer) body.get("age"));
+        if (body.containsKey("height")) profile.setHeight((Integer) body.get("height"));
+        if (body.containsKey("currentweight")) profile.setCurrentweight(((Number) body.get("currentweight")).doubleValue());
+        if (body.containsKey("targetweight")) profile.setTargetweight(((Number) body.get("targetweight")).doubleValue());
+        if (body.containsKey("bodyfat")) {
+            Object bodyFatValue = body.get("bodyfat");
+            profile.setBodyfat(bodyFatValue == null ? null : ((Number) bodyFatValue).doubleValue());
+        }
+        if (body.containsKey("level")) profile.setLevel((String) body.get("level"));
+        if (body.containsKey("goaltype")) profile.setGoaltype((String) body.get("goaltype"));
+        if (body.containsKey("workoutdaysperweek")) profile.setWorkoutdaysperweek((Integer) body.get("workoutdaysperweek"));
+
+        profile.setUpdatedAt(LocalDateTime.now());
+        profileRepository.save(profile);
 
         response.put("success", true);
         response.put("profile", profile);
