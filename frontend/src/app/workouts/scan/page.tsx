@@ -140,6 +140,7 @@ export default function EquipmentScanPage() {
   const [generatedWorkout, setGeneratedWorkout] = useState<EditableExercise[] | null>(null)
   const [workoutLoading, setWorkoutLoading] = useState(false)
   const [workoutError, setWorkoutError] = useState<string | null>(null)
+  const [editingWorkout, setEditingWorkout] = useState(false)
 
   // ─── Save state ───────────────────────────────────────────────────────────
   const [workoutName, setWorkoutName] = useState('')
@@ -427,13 +428,13 @@ export default function EquipmentScanPage() {
                     )
                   })}
                 </div>
-                <button onClick={() => { setPhase('exercises'); setSelectedExercises([]) }}
-                  disabled={selectedMuscles.length === 0}
-                  className={`mt-5 w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors ${
-                    selectedMuscles.length > 0 ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  }`}>
-                  View Exercises <ChevronRight size={16} />
-                </button>
+                <button onClick={() => { setPhase('exercises'); setSelectedExercises([]); setEditingWorkout(!!generatedWorkout) }}
+  disabled={selectedMuscles.length === 0}
+  className={`mt-5 w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors ${
+    selectedMuscles.length > 0 ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+  }`}>
+  View Exercises <ChevronRight size={16} />
+</button>
               </div>
             )}
 
@@ -637,12 +638,33 @@ export default function EquipmentScanPage() {
                           ? <p className="text-xs text-gray-400 mt-1.5">Equipment: {ex.equipment.join(', ')}</p>
                           : <p className="text-xs text-gray-400 mt-1.5">Bodyweight</p>}
                       </div>
-                      <button onClick={() => toggleExercise(ex.name)}
-                        className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                          added ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                        }`}>
-                        {added ? <Check size={16} /> : <Plus size={16} />}
-                      </button>
+                      <button
+  onClick={() => {
+    if (editingWorkout) {
+      // Add to generated workout if not already there
+      setGeneratedWorkout(prev =>
+        prev && !prev.find(e => e.name === ex.name)
+          ? [...prev, { name: ex.name, sets: 3, reps: 10 }]
+          : prev
+      )
+    } else {
+      toggleExercise(ex.name)
+    }
+  }}
+  className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+    editingWorkout
+      ? generatedWorkout?.find(e => e.name === ex.name)
+        ? 'bg-green-600 text-white'
+        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+      : selectedExercises.includes(ex.name)
+      ? 'bg-blue-600 text-white'
+      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+  }`}
+>
+  {(editingWorkout ? generatedWorkout?.find(e => e.name === ex.name) : selectedExercises.includes(ex.name))
+    ? <Check size={16} />
+    : <Plus size={16} />}
+</button>
                     </div>
                   )
                 })
@@ -658,28 +680,56 @@ export default function EquipmentScanPage() {
             </div>
           </div>
           <div>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-6">
-              <h3 className="font-bold text-gray-900 mb-3">Your Workout</h3>
-              {selectedExercises.length > 0 ? (
-                <div className="space-y-2 mb-4">
-                  {selectedExercises.map((name, i) => (
-                    <div key={name} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-                      <span className="text-xs text-gray-400 font-mono w-5">{i + 1}.</span>
-                      <span className="text-sm text-gray-700 flex-1">{name}</span>
-                      <button onClick={() => toggleExercise(name)} className="text-gray-300 hover:text-red-400">
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-400 mb-4">Tap the + button to add exercises to your workout</p>
-              )}
-              <button onClick={reset} className="mt-3 w-full text-xs text-gray-400 hover:text-gray-600 text-center">
-                Start over
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-6">
+    <h3 className="font-bold text-gray-900 mb-3">
+      {editingWorkout ? 'Add to Generated Workout' : 'Your Workout'}
+    </h3>
+    {editingWorkout ? (
+      <div className="space-y-2 mb-4">
+        {generatedWorkout && generatedWorkout.length > 0 ? (
+          generatedWorkout.map((ex, i) => (
+            <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-xs text-gray-400 font-mono w-5">{i + 1}.</span>
+              <span className="text-sm text-gray-700 flex-1">{ex.name}</span>
+              <button onClick={() => removeGeneratedExercise(i)} className="text-gray-300 hover:text-red-400">
+                <X size={14} />
               </button>
             </div>
+          ))
+        ) : (
+          <p className="text-sm text-gray-400">No exercises yet</p>
+        )}
+        <button
+          onClick={() => setPhase('results')}
+          className="mt-3 w-full py-2.5 bg-green-600 text-white rounded-xl font-semibold text-sm hover:bg-green-700 transition-colors"
+        >
+          Done Editing
+        </button>
+      </div>
+    ) : (
+      <>
+        {selectedExercises.length > 0 ? (
+          <div className="space-y-2 mb-4">
+            {selectedExercises.map((name, i) => (
+              <div key={name} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+                <span className="text-xs text-gray-400 font-mono w-5">{i + 1}.</span>
+                <span className="text-sm text-gray-700 flex-1">{name}</span>
+                <button onClick={() => toggleExercise(name)} className="text-gray-300 hover:text-red-400">
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
           </div>
+        ) : (
+          <p className="text-sm text-gray-400 mb-4">Tap the + button to add exercises to your workout</p>
+        )}
+      </>
+    )}
+    <button onClick={reset} className="mt-3 w-full text-xs text-gray-400 hover:text-gray-600 text-center">
+      Start over
+    </button>
+  </div>
+</div>
         </div>
       )}
     </div>
