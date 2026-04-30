@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080/api'
+const API_BASE = 'https://digital-coach-production-14d1.up.railway.app/api'
 
 export async function submitWorkoutConfig(equipment: string[]) {
   try {
@@ -18,12 +18,34 @@ export async function submitWorkoutConfig(equipment: string[]) {
 export async function detectEquipment(files: File[]): Promise<string[]> {
   const formData = new FormData()
   files.forEach((f) => formData.append('files', f))
+
   const res = await fetch(`${API_BASE}/detect`, {
     method: 'POST',
     body: formData,
   })
-  if (!res.ok) throw new Error('Equipment detection failed')
-  return res.json()
+
+  const rawText = await res.text()
+
+  console.log('RAW SERVER RESPONSE:', rawText)
+
+  if (!res.ok) {
+    throw new Error(`Equipment detection failed: ${res.status}`)
+  }
+
+  if (!rawText.trim()) {
+    throw new Error('Equipment detection returned an empty response.')
+  }
+
+  try {
+    const parsed = JSON.parse(rawText)
+    if (!Array.isArray(parsed)) {
+      throw new Error('Equipment detection returned an unexpected payload.')
+    }
+    return parsed
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown parse error'
+    throw new Error(`Equipment detection returned invalid JSON: ${message}`)
+  }
 }
 
 export async function apiRegister(name: string, email: string, password: string) {

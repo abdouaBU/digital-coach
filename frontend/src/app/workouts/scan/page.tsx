@@ -176,8 +176,13 @@ export default function EquipmentScanPage() {
       setAvailableMuscles(muscles)
       setSelectedMuscles(muscles)
       setPhase('results')
-    } catch {
-      setError('Could not connect to the server. Make sure the backend is running on localhost:8080')
+    } catch (error) {
+      console.error(error)
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Could not scan equipment. Make sure the backend is running on digital-coach-production-de3f.up.railway.app'
+      )
       setPhase('results')
     }
   }
@@ -347,7 +352,7 @@ export default function EquipmentScanPage() {
             <Loader2 size={24} className="animate-spin" />
             <span className="font-semibold text-lg">Analyzing your equipment...</span>
           </div>
-          <style jsx>{`
+          <style>{`
             @keyframes scanLine { 0% { top: 0%; } 100% { top: 100%; } }
             :global(.animate-scan-line) { animation: scanLine 1.5s ease-in-out infinite; }
           `}</style>
