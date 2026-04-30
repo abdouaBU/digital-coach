@@ -177,7 +177,7 @@ export default function EquipmentScanPage() {
       setSelectedMuscles(muscles)
       setPhase('results')
     } catch {
-      setError('Could not connect to the server. Make sure the backend is running on digital-coach-production-de3f.up.railway.app')
+      setError('Could not connect to the server. Make sure the backend is running on digital-coach-production-14d1.up.railway.app')
       setPhase('results')
     }
   }
